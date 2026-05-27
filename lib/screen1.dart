@@ -21,11 +21,29 @@ class _Screen1State extends State<Screen1> {
    List picked = [];
   Registration ? reg;
   bool isreg = false;
+    Discovery? dis;
+  List<Service> recs = [];
   @override
   void initState(){
     super.initState();
     startreg();
+    startdis();
     print("init state called for the share page");
+  }
+   Future<void> startdis() async {
+    dis = await startDiscovery('_OnlyFiles._tcp');
+    dis!.addServiceListener((guys, status) {
+      if (!mounted) return;
+      setState(() {
+        if (status == ServiceStatus.found) {
+          if (!recs.any((i) => i.host == guys.host && i.port == guys.port)) {
+            recs.add(guys);
+          }
+        } else if (status == ServiceStatus.lost) {
+          recs.removeWhere((i) => i.host == guys.host && i.port == guys.port);
+        }
+      });
+    });
   }
   
   Future<void>   filepicker()async{
@@ -76,18 +94,29 @@ class _Screen1State extends State<Screen1> {
           
         //  isreg? Text("Receiver mode on pls wait for someone to send u something...",style: TextStyle()):Text("Reciever mode is not on idk why.... it shoukld be on as soon as u switched to screen1"),
         picked.isEmpty?ElevatedButton(onPressed:filepicker , child: Text("Upload Files")):SizedBox(
-          height: MediaQuery.of(context).size.height*0.400,
-      
-          child: ListView.builder(itemCount: picked.length,itemBuilder: ((context, index) =>SizedBox(
-            height: 80, width: 150,
-            child: Card(child: ListTile(
-              title:Text('${picked[index].name}',style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold),),
-              leading: Icon(Icons.file_copy),
-              subtitle: Text('${picked[index].size}',style: TextStyle(fontSize: 8,)),
-            ),),
-          ) )),
+          height: MediaQuery.of(context).size.height*0.9,
+          width: MediaQuery.of(context).size.width*0.9,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                // height: MediaQuery.of(context).size.height*0.400,
+                    
+                child: ListView.builder(itemCount: picked.length,itemBuilder: ((context, index) =>SizedBox(
+                  // height: 80, width: 150,
+                  child: Card(child: ListTile(
+                    title:Text('${picked[index].name}',style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold),),
+                    leading: Icon(Icons.file_copy),
+                    subtitle: Text('${picked[index].size}',style: TextStyle(fontSize: 8,)),
+                  ),),
+                ) )),
+              ),
+              !recs.isEmpty?ListView.builder(itemCount: recs.length,itemBuilder: (c,i)=>TextButton.icon(onPressed: ()=>print('${recs[i].name}'), label: Text('${recs[i].name}'))):Text("No recievers yet")
+            ],
+          ),
         ),
-        picked.isEmpty?Text("Please pick from "):Text('Total items:  ''${picked.length}',style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold)),
+        
+
          
           
         ],
