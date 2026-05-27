@@ -20,13 +20,14 @@ class s1 extends StatefulWidget {
 
 class _s1State extends State<s1> {
   String? s;
+  @override
   void initState(){
     super.initState();
     check();
   }
   Future<void> check()async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
-     s = await prefs.getString("name");
+     s = prefs.getString("name");
     print(s);
     if(s==null){
 

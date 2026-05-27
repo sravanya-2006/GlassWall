@@ -12,7 +12,7 @@ class setup extends StatefulWidget {
 class _setupState extends State<setup> {
   
   
-  TextEditingController tc = new TextEditingController();
+  TextEditingController tc = TextEditingController();
 
   Future<void> set(String s)async{
     SharedPreferences pref  = await SharedPreferences.getInstance();

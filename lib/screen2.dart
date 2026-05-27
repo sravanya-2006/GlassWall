@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter/rendering.dart';
 import 'package:nsd/nsd.dart';
 
 class Screen2 extends StatefulWidget {
@@ -10,43 +9,60 @@ class Screen2 extends StatefulWidget {
 }
 
 class _Screen2State extends State<Screen2> {
-  Discovery? dis ;
-  List<Service> recievers = [];
-  void initState(){
+  Discovery? dis;
+  List<Service> senders = [];
+
+  @override
+  void initState() {
     super.initState();
     startdis();
-    print("Reciver page on");
-
   }
-  Future<void> startdis() async{
-      
 
+  Future<void> startdis() async {
     dis = await startDiscovery('_OnlyFiles._tcp');
-    dis!.addServiceListener((guys,status){
+    dis!.addServiceListener((guys, status) {
+      if (!mounted) return;
       setState(() {
-        recievers.clear();
-        if(status==ServiceStatus.found){
-          if(!mounted)return;
-          print(guys.name);
-          if(!recievers.any((i)=>i.name==guys.name)){
-          recievers.add(guys);
-        }
-        }
-        else if(status== ServiceStatus.lost){
-          recievers.removeWhere((i)=>i.name==guys.name);
+        if (status == ServiceStatus.found) {
+          if (!senders.any((i) => i.host == guys.host && i.port == guys.port)) {
+            senders.add(guys);
+          }
+        } else if (status == ServiceStatus.lost) {
+          senders.removeWhere((i) => i.host == guys.host && i.port == guys.port);
         }
       });
     });
   }
-  void dispose(){
-  if(dis!=null)stopDiscovery(dis!);
-  super.dispose();
+
+  @override
+  void dispose() {
+    if (dis != null) stopDiscovery(dis!);
+    super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
-   return recievers.isEmpty?Center(child: Text("no recievers yet")):ListView.builder(itemCount: recievers.length,itemBuilder: (context,i)=>ListTile(
-    title: Text(recievers[i].name??'analymous'),
-    subtitle: Text('${recievers[i].host}:${recievers[i].port}'),
-   ));
+    return senders.isEmpty
+        ? Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 16),
+                Text("Scanning for senders..."),
+              ],
+            ),
+          )
+        : ListView.builder(
+            itemCount: senders.length,
+            itemBuilder: (ctx, i) => ListTile(
+              leading: Icon(Icons.phone_android),
+              title: Text(senders[i].name ?? 'Unknown'),
+              subtitle: Text('${senders[i].host}:${senders[i].port}'),
+              onTap: () {
+                // → connect + receive file here
+              },
+            ),
+          );
   }
 }
