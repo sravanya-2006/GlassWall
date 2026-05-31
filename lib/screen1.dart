@@ -55,6 +55,7 @@ class _Screen1State extends State<Screen1> {
     ;
     
     print(picked[0].name);}
+    
   Future<void> startreg()async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? name = prefs.getString("name");
@@ -74,6 +75,7 @@ class _Screen1State extends State<Screen1> {
     print(e);
    }
   }
+  
   @override
   void dispose(){
     if(reg!=null) unregister(reg!);
@@ -85,43 +87,27 @@ class _Screen1State extends State<Screen1> {
   Widget build(BuildContext context) {
     return Center(
     child: Padding(padding: 
-    EdgeInsets.all(8),
-    child: SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          
-        //  isreg? Text("Receiver mode on pls wait for someone to send u something...",style: TextStyle()):Text("Reciever mode is not on idk why.... it shoukld be on as soon as u switched to screen1"),
-        picked.isEmpty?ElevatedButton(onPressed:filepicker , child: Text("Upload Files")):SizedBox(
-          height: MediaQuery.of(context).size.height*0.9,
-          width: MediaQuery.of(context).size.width*0.9,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                // height: MediaQuery.of(context).size.height*0.400,
-                    
-                child: ListView.builder(itemCount: picked.length,itemBuilder: ((context, index) =>SizedBox(
-                  // height: 80, width: 150,
-                  child: Card(child: ListTile(
-                    title:Text('${picked[index].name}',style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold),),
-                    leading: Icon(Icons.file_copy),
-                    subtitle: Text('${picked[index].size}',style: TextStyle(fontSize: 8,)),
-                  ),),
-                ) )),
-              ),
-              !recs.isEmpty?ListView.builder(itemCount: recs.length,itemBuilder: (c,i)=>TextButton.icon(onPressed: ()=>print('${recs[i].name}'), label: Text('${recs[i].name}'))):Text("No recievers yet")
-            ],
-          ),
-        ),
-        
+    EdgeInsets.all(25),
+    child: Column(
+    children: [
+      picked.isEmpty?ElevatedButton(onPressed: ()=>filepicker(), child: Text("Pick files",style: TextStyle(fontWeight: FontWeight.w700),)):
+      Expanded(child: ListView.builder(itemCount: picked.length,itemBuilder: (c,i)=>ListTile(
+        leading: Icon(Icons.file_copy_rounded),
+        title: Text("${picked[i].name}"),
+      ))),
+      if(picked.isNotEmpty)...[
+        Expanded(child: SizedBox(
+          height: 600,
+          child: recs.isNotEmpty?ListView.builder(itemCount: recs.length,itemBuilder: (c,i)=>ListTile(
+            title: Text('${recs[i].name}'),
+          )):Text("Pls w8")
 
-         
-          
-        ],
-        
-      ),
+        ))
+      ]
+    ],
+     
+    
+      
     ),
     ),
   );
