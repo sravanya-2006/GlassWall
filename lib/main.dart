@@ -15,7 +15,10 @@ void main(){
 
       
     ),
-    darkTheme: ThemeData(fontFamily: 'mont',colorScheme: ColorScheme.dark()),
+    darkTheme: ThemeData(fontFamily: 'mont',colorScheme: ColorScheme.dark(
+      surface: const Color.fromARGB(255,32, 41, 64)
+      // errorContainer: const Color.fromARGB(255, 69, 29, 29)
+    )),
     themeMode: ThemeMode.system,
     debugShowCheckedModeBanner: false,
     home: s1(),
@@ -63,8 +66,11 @@ class _s1State extends State<s1> {
     return Scaffold(
       key: scaff,
       drawer: Drawer(
+       
+        
         child: ListView(
-          padding: EdgeInsets.all(3),
+        
+          padding: EdgeInsets.all(13),
           children: [
             DrawerHeader(child: Text("Wt's ups  $s  ??",style: TextStyle(fontWeight: FontWeight.w900),)),
             ListTile(leading: Icon(Icons.search),title: Text("data"),)
@@ -85,43 +91,37 @@ class _s1State extends State<s1> {
 
             Positioned.fill(child: screens[curr]),
         
-            Positioned(left: 16,right: 16,bottom: 16,
+            Positioned(left: 29,right: 29,bottom: 16,
               child: Padding(
                 padding: const EdgeInsets.all(13.0),
-                child: ClipRRect(
-                  borderRadius: BorderRadiusGeometry.circular(34),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 20,sigmaY: 20),
-                    child: Container(
-                      height: 60,
-                      decoration: BoxDecoration(
-                       color: Colors.white.withValues(alpha: 0.05), // lower = more transparent
-          borderRadius: BorderRadius.circular(50),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 20)],
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          IconButton(onPressed: ()=>{
-                            setState(() {
-                              curr =0;
-                            })
-                          }, icon: Icon(Icons.send_rounded,),),
-                          IconButton(onPressed: ()=>{
-                            setState(() {
-                              curr =1;
-                            })
-                          }, icon: Icon(Icons.receipt_rounded,)),
-                          IconButton(onPressed: ()=>{
-                            setState(() {
-                              curr =2;
-                            })
-                          }, icon: Icon(Icons.cloud_upload_outlined))
-                        ],
-                      ),
-                    ),
+                child: Container(
+                  height: 60,
+                  decoration: BoxDecoration(
+                   color: const Color.fromARGB(39, 255, 255, 255).withValues(alpha: 0.05), // lower = more transparent
+                        borderRadius: BorderRadius.circular(50),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+                        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 20)],
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      IconButton(onPressed: ()=>{
+                        setState(() {
+                          curr =0;
+                        })
+                      }, icon: Icon(Icons.send_rounded,),),
+                      IconButton(onPressed: ()=>{
+                        setState(() {
+                          curr =1;
+                        })
+                      }, icon: Icon(Icons.receipt_rounded,)),
+                      IconButton(onPressed: ()=>{
+                        setState(() {
+                          curr =2;
+                        })
+                      }, icon: Icon(Icons.cloud_upload_outlined))
+                    ],
                   ),
                 ),
               ))

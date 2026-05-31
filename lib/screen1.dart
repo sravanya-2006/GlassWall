@@ -97,7 +97,12 @@ String? name;
     EdgeInsets.all(25),
     child: Column(
     children: [
-      picked.isEmpty?ElevatedButton(onPressed: ()=>filepicker(), child: Text("Pick files",style: TextStyle(fontWeight: FontWeight.w700),)):
+      picked.isEmpty?Column(
+        children: [
+          LottieBuilder.asset('ass/popcorn.json'),
+          ElevatedButton(onPressed: ()=>filepicker(), child: Text("Pick files to continue further...",style: TextStyle(fontWeight: FontWeight.w400),)),
+        ],
+      ):
       Center(
         child: Expanded(child: ListView.builder(itemCount: picked.length,itemBuilder: (c,i)=>Center(
           child: Container(
