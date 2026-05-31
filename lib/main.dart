@@ -39,6 +39,7 @@ class _s1State extends State<s1> {
   }
   Future<void> check()async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    // prefs.clear();
      s = prefs.getString("name");
     print(s);
     setState(() {

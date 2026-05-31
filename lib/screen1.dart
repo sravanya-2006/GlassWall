@@ -18,6 +18,7 @@ class Screen1 extends StatefulWidget {
 }
 
 class _Screen1State extends State<Screen1> {
+String? name;
    List picked = [];
   Registration ? reg;
   bool isreg = false;
@@ -26,11 +27,17 @@ class _Screen1State extends State<Screen1> {
   @override
   void initState(){
     super.initState();
-    startreg();
+    // startreg();
     startdis();
     print("init state called for the share page");
   }
    Future<void> startdis() async {
+    SharedPreferences pref  = await SharedPreferences.getInstance();
+    name = pref.getString("name");
+    setState(() {
+      
+    });
+
     dis = await startDiscovery('_OnlyFiles._tcp');
     dis!.addServiceListener((guys, status) {
       if (!mounted) return;
@@ -56,25 +63,25 @@ class _Screen1State extends State<Screen1> {
     
     print(picked[0].name);}
     
-  Future<void> startreg()async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? name = prefs.getString("name");
-   try{
-     reg = await register(Service(
-      name: '$name',
-      type: '_OnlyFiles._tcp',
-      port: 6969,
-    ));
-    if(!mounted)return;
-    setState(() {
-      isreg = true;
-    });
-    print("ahh bro im visible now!!!!!!!!!!!!!!!!!!");
-   }
-   catch(e){
-    print(e);
-   }
-  }
+  // Future<void> startreg()async{
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? name = prefs.getString("name");
+  //  try{
+  //    reg = await register(Service(
+  //     name: '$name',
+  //     type: '_OnlyFiles._tcp',
+  //     port: 6969,
+  //   ));
+  //   if(!mounted)return;
+  //   setState(() {
+  //     isreg = true;
+  //   });
+  //   print("ahh bro im visible now!!!!!!!!!!!!!!!!!!");
+  //  }
+  //  catch(e){
+  //   print(e);
+  //  }
+  // }
   
   @override
   void dispose(){
@@ -91,10 +98,20 @@ class _Screen1State extends State<Screen1> {
     child: Column(
     children: [
       picked.isEmpty?ElevatedButton(onPressed: ()=>filepicker(), child: Text("Pick files",style: TextStyle(fontWeight: FontWeight.w700),)):
-      Expanded(child: ListView.builder(itemCount: picked.length,itemBuilder: (c,i)=>ListTile(
-        leading: Icon(Icons.file_copy_rounded),
-        title: Text("${picked[i].name}"),
-      ))),
+      Center(
+        child: Expanded(child: ListView.builder(itemCount: picked.length,itemBuilder: (c,i)=>Center(
+          child: Container(
+            // color: Colors.red
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.white)
+            ),
+            child: ListTile(
+              leading: Icon(Icons.file_copy_rounded),
+              title: Text("${picked[i].name}"),
+            ),
+          ),
+        ))),
+      ),
       if(picked.isNotEmpty)...[
         Expanded(child: SizedBox(
           height: 600,
