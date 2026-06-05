@@ -40,6 +40,7 @@ String? name;
 
     dis = await startDiscovery('_OnlyFiles._tcp');
     dis!.addServiceListener((guys, status) {
+      print("object");
       if (!mounted) return;
       setState(() {
         if (status == ServiceStatus.found) {
@@ -92,44 +93,89 @@ String? name;
   
   @override
   Widget build(BuildContext context) {
+    bool isDark = Theme.of(context).brightness==Brightness.dark;
+    PageController pc = PageController(viewportFraction: 0.77);
     return Center(
     child: Padding(padding: 
-    EdgeInsets.all(25),
-    child: Column(
-    children: [
-      picked.isEmpty?Column(
-        children: [
-          LottieBuilder.asset('ass/popcorn.json'),
-          ElevatedButton(onPressed: ()=>filepicker(), child: Text("Pick files to continue further...",style: TextStyle(fontWeight: FontWeight.w400),)),
-        ],
-      ):
-      Center(
-        child: Expanded(child: ListView.builder(itemCount: picked.length,itemBuilder: (c,i)=>Center(
-          child: Container(
-            // color: Colors.red
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.white)
-            ),
-            child: ListTile(
-              leading: Icon(Icons.file_copy_rounded),
-              title: Text("${picked[i].name}"),
-            ),
+    EdgeInsets.all(5),
+    child: SizedBox(
+      height: MediaQuery.of(context).size.height*0.86,
+      width: MediaQuery.of(context).size.width*0.86,
+      child: picked.isEmpty?Center(
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            
+            // crossAxisAlignment: CrossAxisAlignment.center,
+            // mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              LottieBuilder.asset('ass/wait.json',filterQuality: FilterQuality.high,fit: BoxFit.cover,),
+              ElevatedButton(onPressed: ()=>filepicker(), child: Text("Pick files to continue further...",style: TextStyle(fontWeight: FontWeight.w400),)),
+              // Text("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since 1966, when designers at Letraset and James Mosley, the librarian at St Bride Printing Library, took a 1914 Cicero translation and scrambled it to make dummy text for Letraset's Body Type sheets. It has survived not only many decades, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised thanks to these sheets and more recently with desktop publishing software including versions of Lorem Ipsum.")
+            ],
           ),
-        ))),
-      ),
-      if(picked.isNotEmpty)...[
-        Expanded(child: SizedBox(
-          height: 600,
-          child: recs.isNotEmpty?ListView.builder(itemCount: recs.length,itemBuilder: (c,i)=>ListTile(
-            title: Text('${recs[i].name}'),
-          )):Text("Pls w8")
-
-        ))
-      ]
-    ],
-     
-    
+        ),
+      ):Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          
+          children: [
+            SizedBox(height: 23,),
+            Container(
+              
+              constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.3, // Your max height limit
+          ),
+              
+          
+                
+                
+                child: PageView.builder(controller: pc,itemCount: picked.length,itemBuilder: (c,i)=>
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                color: isDark?Color(0xFF12161A):Color(0xFFF5F5F7),
+                borderRadius: BorderRadius.circular(23)
+                            ),
+                    child: Row(
+                      // crossAxisAlignment: CrossAxisAlignment.center,
+                      // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                      
+                          // color: isDark?Color(0xFF12161A):Color(0xFFF5F5F7),
+                         Text(" ${i+1}.  ${picked[i].name} ",style: TextStyle(fontWeight: FontWeight.w700),overflow: TextOverflow.ellipsis,),
+                    
+                        
+                        
+                        Divider(height: 2,)
+                                  
+                        
+                                  
+                       
+                      ],
+                    ),
+                  ),
+                )
+                
+                ),
+              
+            ),
+             Divider(thickness: 3,),
+                      !recs.isEmpty?Expanded(child: ListView.builder(
+                        itemCount: recs.length,
+                        itemBuilder: (c,i)=>ListTile(
+                          title: Text("${recs[i].name}"),
+                        ),
+                        
+                      )):CircularProgressIndicator.adaptive()
+                    ]
+          
+        ),
+      )
       
+             
+            
     ),
     ),
   );

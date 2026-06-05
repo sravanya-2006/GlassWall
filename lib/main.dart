@@ -5,18 +5,21 @@ import 'package:glasswall/screen1.dart';
 import 'package:glasswall/screen2.dart';
 import 'package:glasswall/setup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 
 void main(){
   
   runApp(MaterialApp(
     theme: ThemeData(
       fontFamily: 'mont',
-      colorScheme: ColorScheme.light(),
+      colorScheme: ColorScheme.light(
+        surface: Color(0xFFFDFBF7)
+      ),
 
       
     ),
-    darkTheme: ThemeData(fontFamily: 'mont',colorScheme: ColorScheme.dark(
-      surface: const Color.fromARGB(255,32, 41, 64)
+    darkTheme: ThemeData(fontFamily: 'gsan',colorScheme: ColorScheme.dark(
+      surface: Color(0xFF0B111E)
       // errorContainer: const Color.fromARGB(255, 69, 29, 29)
     )),
     themeMode: ThemeMode.system,
@@ -63,6 +66,7 @@ class _s1State extends State<s1> {
   int curr = 0;
   @override
   Widget build(BuildContext context) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       key: scaff,
       drawer: Drawer(
@@ -84,44 +88,53 @@ class _s1State extends State<s1> {
         child: Padding(padding: EdgeInsets.all(18),child: Stack(
           children: [
             Positioned(
-              top: 0,
+              top: 3,
               left: 0,
-              child: IconButton(onPressed:()=> scaff.currentState?.openDrawer(), icon: Icon(Icons.menu)))
+              child: IconButton(onPressed:()=> scaff.currentState?.openDrawer(), icon: Icon(Icons.auto_awesome_mosaic_outlined)))
             ,
+            Positioned(top: 4.5,
+              left: 50,child: Text("GlassWall",style: TextStyle(fontWeight: FontWeight.w700,fontSize: 24),)),
 
             Positioned.fill(child: screens[curr]),
         
             Positioned(left: 29,right: 29,bottom: 16,
               child: Padding(
                 padding: const EdgeInsets.all(13.0),
-                child: Container(
-                  height: 60,
-                  decoration: BoxDecoration(
-                   color: const Color.fromARGB(39, 255, 255, 255).withValues(alpha: 0.05), // lower = more transparent
-                        borderRadius: BorderRadius.circular(50),
-                        border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
-                        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 20)],
+                child: LiquidGlassLayer(
+                  settings: LiquidGlassSettings(
+                    thickness: 10,
+                    blur: 20,
+                    lightIntensity: 1.5,
+                    
+                   saturation: 1.2,
+                    // glassColor: Color.fromARGB(15, 255, 255, 255)
                   ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      IconButton(onPressed: ()=>{
-                        setState(() {
-                          curr =0;
-                        })
-                      }, icon: Icon(Icons.send_rounded,),),
-                      IconButton(onPressed: ()=>{
-                        setState(() {
-                          curr =1;
-                        })
-                      }, icon: Icon(Icons.receipt_rounded,)),
-                      IconButton(onPressed: ()=>{
-                        setState(() {
-                          curr =2;
-                        })
-                      }, icon: Icon(Icons.cloud_upload_outlined))
-                    ],
+                  child: LiquidGlass(
+                    shape: LiquidRoundedSuperellipse(borderRadius: 50,side: BorderSide.none,),
+                    child: SizedBox(
+                      height: 60,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          IconButton(onPressed: ()=>{
+                            setState(() {
+                              curr =0;
+                            })
+                          }, icon: Icon(Icons.send_rounded,),),
+                          IconButton(onPressed: ()=>{
+                            setState(() {
+                              curr =1;
+                            })
+                          }, icon: Icon(Icons.receipt_rounded,)),
+                          IconButton(onPressed: ()=>{
+                            setState(() {
+                              curr =2;
+                            })
+                          }, icon: Icon(Icons.cloud_upload_outlined))
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ))

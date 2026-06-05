@@ -42,6 +42,7 @@ dependencies:
   file_picker: ^10.3.10
   unique_names_generator: ^3.1.2
   animated_text_kit: ^4.3.0
+  liquid_glass_renderer: ^0.2.0-dev.4
 
 
 dev_dependencies:
@@ -92,6 +93,14 @@ flutter:
           weight: 700
         - asset: fonts/Montserrat-Black.ttf
           weight: 900
+    - family: gsan
+      fonts:
+        - asset: fonts/gsanreg.ttf
+        - asset: fonts/gsanmed.ttf
+          weight: 400
+        - asset: fonts/gsansemib.ttf
+          weight: 700
+      
 
 
   #   - family: Trajan Pro
