@@ -24,10 +24,11 @@ String? name;
   bool isreg = false;
     Discovery? dis;
   List<Service> recs = [];
+  var temp;
   @override
   void initState(){
     super.initState();
-    // startreg();
+   
     startdis();
     print("init state called for the share page");
   }
@@ -35,16 +36,17 @@ String? name;
     SharedPreferences pref  = await SharedPreferences.getInstance();
     name = pref.getString("name");
     setState(() {
+      temp = name;
       
     });
 
-    dis = await startDiscovery('_OnlyFiles._tcp');
+    dis = await startDiscovery('_pandawannashare._tcp');
     dis!.addServiceListener((guys, status) {
       print("object");
       if (!mounted) return;
       setState(() {
         if (status == ServiceStatus.found) {
-          if (!recs.any((i) => i.host == guys.host && i.port == guys.port)) {
+          if (guys.name!=temp&&!recs.any((i) => i.host == guys.host && i.port == guys.port)) {
             recs.add(guys);
           }
         } else if (status == ServiceStatus.lost) {
@@ -64,29 +66,11 @@ String? name;
     
     print(picked[0].name);}
     
-  // Future<void> startreg()async{
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? name = prefs.getString("name");
-  //  try{
-  //    reg = await register(Service(
-  //     name: '$name',
-  //     type: '_OnlyFiles._tcp',
-  //     port: 6969,
-  //   ));
-  //   if(!mounted)return;
-  //   setState(() {
-  //     isreg = true;
-  //   });
-  //   print("ahh bro im visible now!!!!!!!!!!!!!!!!!!");
-  //  }
-  //  catch(e){
-  //   print(e);
-  //  }
-  // }
+
   
   @override
   void dispose(){
-    if(reg!=null) unregister(reg!);
+    if(dis!=null)stopDiscovery(dis!);
     super.dispose();
   }
 
@@ -144,7 +128,7 @@ String? name;
                       children: [
                       
                           // color: isDark?Color(0xFF12161A):Color(0xFFF5F5F7),
-                         Text(" ${i+1}.  ${picked[i].name} ",style: TextStyle(fontWeight: FontWeight.w700),overflow: TextOverflow.ellipsis,),
+                         Expanded(child: Text(" ${i+1}.  ${picked[i].name} ",style: TextStyle(fontWeight: FontWeight.w700,fontSize: 16),overflow: TextOverflow.ellipsis,)),
                     
                         
                         

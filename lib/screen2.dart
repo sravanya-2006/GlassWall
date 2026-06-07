@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nsd/nsd.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Screen2 extends StatefulWidget {
   const Screen2({super.key});
@@ -11,28 +12,44 @@ class Screen2 extends StatefulWidget {
 class _Screen2State extends State<Screen2> {
   Discovery? dis;
   List<Service> senders = [];
+  String? name;
+  Registration ? reg;
+  bool isreg = false;
 
   @override
   void initState() {
     super.initState();
-    startdis();
+    startreg();
+  
   }
 
-  Future<void> startdis() async {
-    dis = await startDiscovery('_OnlyFiles._tcp');
-    dis!.addServiceListener((guys, status) {
-      if (!mounted) return;
-      setState(() {
-        if (status == ServiceStatus.found) {
-          if (!senders.any((i) => i.host == guys.host && i.port == guys.port)) {
-            senders.add(guys);
-          }
-        } else if (status == ServiceStatus.lost) {
-          senders.removeWhere((i) => i.host == guys.host && i.port == guys.port);
-        }
-      });
+  Future<void> startreg()async{
+     print("assta lavista baby");
+   
+   try{
+     print("psuhhhh");
+     SharedPreferences prefs = await SharedPreferences.getInstance();
+    //  prefs.clear();
+     name = prefs.getString("name");
+     reg = await register(Service(
+      name: '$name',
+      type: '_pandawannashare._tcp',
+      port: 6969,
+    ));
+    if(!mounted){
+      print("not mounted");
+      return;};
+    setState(() {
+      isreg = true;
     });
+    print("ahh bro im visible now!!!!!!!!!!!!!!!!!!");
+   }
+   catch(e,st){
+    print("error $e");
+    print("error $st");
+   }
   }
+
 
   @override
   void dispose() {

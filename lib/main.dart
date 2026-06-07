@@ -111,6 +111,7 @@ class _s1State extends State<s1> {
                   ),
                   child: LiquidGlass(
                     shape: LiquidRoundedSuperellipse(borderRadius: 50,side: BorderSide.none,),
+                    
                     child: SizedBox(
                       height: 60,
                       child: Row(
