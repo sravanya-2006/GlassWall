@@ -1,10 +1,13 @@
 
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:nsd/nsd.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:http/http.dart' as http;
 
 
 
@@ -64,7 +67,61 @@ String? name;
     })
     ;
     
-    print(picked[0].name);}
+    print(picked[0].name);
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  }
+  Future<void> send(Service rec) async{
+    print("sender is on");
+    if(picked.isEmpty){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Hello genius!!!! u might wantv to pick some files before clicking on a reciever.")));
+      return;
+
+    }
+    if(rec.host==null)return;
+    for(var pf in picked){
+      File fi = File(pf.path!);
+      var ask = await http.get(Uri.parse('http://${rec.host}:${rec.port}/wannarecieve'),headers: {'filename':pf.name,'myself':name??'John Krishna'});
+      if(ask.statusCode==403){
+        if(mounted){
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Uk this guy??? ")));
+          
+          return;
+        }
+      }
+       try{
+      var req = http.StreamedRequest('POST', Uri.parse('http://${rec.host}:${rec.port}/Enjoy'));
+      req.headers['filename']= pf.name;
+      req.contentLength = await fi.length();
+      fi.openRead().listen(
+        (chunk){
+        req.sink.add(chunk);
+      },
+      onDone: () async {
+        req.sink.close();
+      },
+      );
+
+      var response = await req.send();
+      if(response.statusCode ==200){
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("DONE")));
+      }
+      
+    }
+    catch(e){
+      print(e.toString());
+    }
+    }
+   
+
+  }
     
 
   
@@ -148,8 +205,9 @@ String? name;
              Divider(thickness: 3,),
                       !recs.isEmpty?Expanded(child: ListView.builder(
                         itemCount: recs.length,
-                        itemBuilder: (c,i)=>ListTile(
-                          title: Text("${recs[i].name}"),
+                        itemBuilder: (c,i)=>TextButton(
+                          child: Text("${recs[i].name}"),
+                          onPressed: ()=>send(recs[i]),
                         ),
                         
                       )):CircularProgressIndicator.adaptive()
