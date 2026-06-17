@@ -76,7 +76,7 @@ class _Screen2State extends State<Screen2> {
         else{req.response..statusCode = 403..close();}
         
       }
-      else if(req.uri.path=='Enjoy'){
+      else if(req.uri.path=='/Enjoy'){
         String fname = req.headers.value('filename')??'Whats in the box !!! Whats in the boxxx ';
         Directory dir = await getApplicationDocumentsDirectory();
         File file = File('${dir.path}/$fname');
@@ -100,7 +100,9 @@ class _Screen2State extends State<Screen2> {
 
   @override
   void dispose() {
-    if (dis != null) stopDiscovery(dis!);
+    // if (dis != null) stopDiscovery(dis!)
+    if(reg!=null)unregister(reg!);
+    server!.close(force: true);
     super.dispose();
   }
 

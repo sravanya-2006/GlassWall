@@ -21,6 +21,7 @@ class Screen1 extends StatefulWidget {
 }
 
 class _Screen1State extends State<Screen1> {
+  bool sending = false;
 String? name;
    List picked = [];
   Registration ? reg;
@@ -86,9 +87,13 @@ String? name;
 
     }
     if(rec.host==null)return;
+    String hos = rec.host!;
+    final address = await InternetAddress.lookup(hos,type: InternetAddressType.IPv4);
+    final host = address.first.address;
     for(var pf in picked){
       File fi = File(pf.path!);
-      var ask = await http.get(Uri.parse('http://${rec.host}:${rec.port}/wannarecieve'),headers: {'filename':pf.name,'myself':name??'John Krishna'});
+      
+      var ask = await http.get(Uri.parse('http://${host}:${rec.port}/wannarecieve'),headers: {'filename':pf.name,'myself':name??'John Krishna'});
       if(ask.statusCode==403){
         if(mounted){
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Uk this guy??? ")));
@@ -97,6 +102,9 @@ String? name;
         }
       }
        try{
+        setState(() {
+        sending = true;
+        });
       var req = http.StreamedRequest('POST', Uri.parse('http://${rec.host}:${rec.port}/Enjoy'));
       req.headers['filename']= pf.name;
       req.contentLength = await fi.length();
