@@ -69,6 +69,11 @@ String? name;
     ;
     
     print(picked[0].name);
+    print(picked[0].path);
+        print(picked[0].ext);
+
+    
+
     
     
     
@@ -90,10 +95,9 @@ String? name;
     String hos = rec.host!;
     final address = await InternetAddress.lookup(hos,type: InternetAddressType.IPv4);
     final host = address.first.address;
-    for(var pf in picked){
-      File fi = File(pf.path!);
+    
       
-      var ask = await http.get(Uri.parse('http://${host}:${rec.port}/wannarecieve'),headers: {'filename':pf.name,'myself':name??'John Krishna'});
+      var ask = await http.get(Uri.parse('http://${host}:${rec.port}/wannarecieve'),headers: {'filename':picked[0].name,'myself':name??'John Krishna','count':picked.length.toString()});
       if(ask.statusCode==403){
         if(mounted){
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Uk this guy??? ")));
@@ -101,6 +105,9 @@ String? name;
           return;
         }
       }
+    for(var pf in picked){
+      File fi = File(pf.path!);
+      
        try{
         setState(() {
         sending = true;
@@ -146,24 +153,43 @@ String? name;
     PageController pc = PageController(viewportFraction: 0.77);
     return Center(
     child: Padding(padding: 
-    EdgeInsets.all(5),
+    EdgeInsets.all(6),
     child: SizedBox(
-      height: MediaQuery.of(context).size.height*0.86,
-      width: MediaQuery.of(context).size.width*0.86,
+      height: MediaQuery.of(context).size.height*0.95,
+      width: MediaQuery.of(context).size.width*0.95,
       child: picked.isEmpty?Center(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(
+        child: InkWell(
+  onTap: () => filepicker(),
+  child: ClipRRect(
+    borderRadius: BorderRadius.circular(15),
+    child: Stack(
+      // Centers children in the stack
+      children: [
+        // The image is the base layer
+        Image.asset(
+          'ass/gg.jpeg',
+          fit: BoxFit.cover,
+          height: MediaQuery.of(context).size.height*0.8,
+      width: MediaQuery.of(context).size.width*0.97,
+        ),
+        // The text is placed over the image
+        Positioned( left: 3,
+        top: 6,
+          child: const Text(
+            "Pick Files to get Started",
+            style: TextStyle(
             
-            // crossAxisAlignment: CrossAxisAlignment.center,
-            // mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              LottieBuilder.asset('ass/wait.json',filterQuality: FilterQuality.high,fit: BoxFit.cover,),
-              ElevatedButton(onPressed: ()=>filepicker(), child: Text("Pick files to continue further...",style: TextStyle(fontWeight: FontWeight.w400),)),
-              // Text("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since 1966, when designers at Letraset and James Mosley, the librarian at St Bride Printing Library, took a 1914 Cicero translation and scrambled it to make dummy text for Letraset's Body Type sheets. It has survived not only many decades, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised thanks to these sheets and more recently with desktop publishing software including versions of Lorem Ipsum.")
-            ],
+              color: Colors.white, // Ensure high contrast with image
+              fontSize: 16,
+              fontWeight: FontWeight.w700
+              // Optional: add a semi-transparent background
+            ),
           ),
         ),
+      ],
+    ),
+  ),
+),
       ):Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -171,40 +197,28 @@ String? name;
           children: [
             SizedBox(height: 23,),
             Container(
-              
               constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.3, // Your max height limit
+              maxHeight: MediaQuery.of(context).size.height * 0.3, // Your max height limit
           ),
               
           
                 
                 
                 child: PageView.builder(controller: pc,itemCount: picked.length,itemBuilder: (c,i)=>
+                
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
-                    decoration: BoxDecoration(
-                color: isDark?Color(0xFF12161A):Color(0xFFF5F5F7),
-                borderRadius: BorderRadius.circular(23)
-                            ),
-                    child: Row(
-                      // crossAxisAlignment: CrossAxisAlignment.center,
-                      // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                      
-                          // color: isDark?Color(0xFF12161A):Color(0xFFF5F5F7),
-                         Expanded(child: Text(" ${i+1}.  ${picked[i].name} ",style: TextStyle(fontWeight: FontWeight.w700,fontSize: 16),overflow: TextOverflow.ellipsis,)),
-                    
-                        
-                        
-                        Divider(height: 2,)
-                                  
-                        
-                                  
-                       
-                      ],
+                    child: ClipRRect(
+                      child: Stack(
+                        children: [
+                          // LottieBuilder.asset('ass/scan.json'),
+                          ClipRRect(borderRadius: BorderRadiusGeometry.circular(16),child: Image.file(File(picked[i].path,),fit: BoxFit.cover,height: double.infinity,width: double.infinity,)),
+                          Container(decoration: BoxDecoration(color: Colors.white),child: Text("${picked[i].name}", textAlign: TextAlign.center,))
+                        ],
+                      ),
                     ),
-                  ),
+                  )
                 )
                 
                 ),

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:glasswall/screen1.dart';
 import 'package:glasswall/screen2.dart';
@@ -11,15 +12,15 @@ void main(){
   
   runApp(MaterialApp(
     theme: ThemeData(
-      fontFamily: 'mont',
+      fontFamily: 'gsan',
       colorScheme: ColorScheme.light(
-        surface: Color(0xFFFDFBF7)
+        // surface: Color.fromARGB(255, 245, 242, 236)
       ),
 
       
     ),
     darkTheme: ThemeData(fontFamily: 'gsan',colorScheme: ColorScheme.dark(
-      surface: Color(0xFF0B111E)
+      surface: Color.fromARGB(255, 0, 2, 7)
       // errorContainer: const Color.fromARGB(255, 69, 29, 29)
     )),
     themeMode: ThemeMode.system,
@@ -63,6 +64,14 @@ class _s1State extends State<s1> {
     Screen2(),
     Center(child: Text("Screen3"),),
   ];
+  Future <void> change() async{
+    SharedPreferences pref =  await SharedPreferences.getInstance();
+    String? chosen = await FilePicker.platform.getDirectoryPath(
+      dialogTitle: 'Where should received files go?',
+      
+    );
+    await pref.setString('chosen', chosen!);
+  }
   int curr = 0;
   @override
   Widget build(BuildContext context) {
@@ -74,10 +83,11 @@ class _s1State extends State<s1> {
         
         child: ListView(
         
-          padding: EdgeInsets.all(13),
+          padding: EdgeInsets.all(8),
           children: [
             DrawerHeader(child: Text("Wt's ups  $s  ??",style: TextStyle(fontWeight: FontWeight.w900),)),
-            ListTile(leading: Icon(Icons.search),title: Text("data"),)
+            ListTile(leading: Icon(Icons.search),title: Text("data"),),
+            TextButton(onPressed: ()=> change(), child: Text("location"))
           ],
         ),
       ),
@@ -88,26 +98,27 @@ class _s1State extends State<s1> {
         child: Padding(padding: EdgeInsets.all(18),child: Stack(
           children: [
             Positioned(
-              top: 3,
+              top: 1,
               left: 0,
               child: IconButton(onPressed:()=> scaff.currentState?.openDrawer(), icon: Icon(Icons.auto_awesome_mosaic_outlined)))
             ,
-            Positioned(top: 4.5,
+            Positioned(top: 1,
               left: 50,child: Text("GlassWall",style: TextStyle(fontWeight: FontWeight.w700,fontSize: 24),)),
 
             Positioned.fill(child: screens[curr]),
         
-            Positioned(left: 29,right: 29,bottom: 16,
+            Positioned(left: 20,right: 20,bottom: 5,
               child: Padding(
                 padding: const EdgeInsets.all(13.0),
                 child: LiquidGlassLayer(
                   settings: LiquidGlassSettings(
+                    
                     thickness: 10,
                     blur: 20,
                     lightIntensity: 1.5,
                     
                    saturation: 1.2,
-                    // glassColor: Color.fromARGB(15, 255, 255, 255)
+                    // glassColor: Color.fromARGB(118, 243, 238, 238)
                   ),
                   child: LiquidGlass(
                     shape: LiquidRoundedSuperellipse(borderRadius: 50,side: BorderSide.none,),

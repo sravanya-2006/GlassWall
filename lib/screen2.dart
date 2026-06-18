@@ -22,6 +22,7 @@ class _Screen2State extends State<Screen2> {
   bool isreg = false;
   List<String> recfiles = [];
   HttpServer? server;
+  Directory? dir;
 
   @override
   void initState() {
@@ -58,7 +59,11 @@ class _Screen2State extends State<Screen2> {
    }
   }
   Future<void> ser()async
+
   {
+        SharedPreferences pref =  await SharedPreferences.getInstance();
+        String? loc = pref.getString("chosen");
+        
     try{
        server = await HttpServer.bind(InternetAddress.anyIPv4, 6969);
      print("server is up");
@@ -66,8 +71,9 @@ class _Screen2State extends State<Screen2> {
       if(req.uri.path=='/wannarecieve'){
         String fname = req.headers.value('filename')??'Whats in the box !!! Whats in the boxxx ';
         String hisname = req.headers.value('myself')!;
+        
         bool? accepted = await showDialog<bool>(context: context, builder: (c)=>AlertDialog(title: Text("${hisname} wants to send u something  "),
-        content: Text(" it starts with $fname. it might be more than that tho... or less"),
+        content: Text("Total count : ${req.headers.value('count')} \n $fname "),
         actions: [TextButton(onPressed: ()=>Navigator.pop(c,false) , child: Text("Reject")),TextButton(onPressed: ()=>Navigator.pop(c,true), child: Text("Accept"))],));
         if(accepted!){
           req.response..statusCode = 200..close();
@@ -76,10 +82,17 @@ class _Screen2State extends State<Screen2> {
         else{req.response..statusCode = 403..close();}
         
       }
+      
       else if(req.uri.path=='/Enjoy'){
         String fname = req.headers.value('filename')??'Whats in the box !!! Whats in the boxxx ';
-        Directory dir = await getApplicationDocumentsDirectory();
-        File file = File('${dir.path}/$fname');
+        if(loc==null){
+           dir = await getApplicationDocumentsDirectory();
+        }
+        else{
+           dir = await Directory(loc!);
+        }
+        
+        File file = File('${dir!.path}/$fname');
         IOSink sink = file.openWrite();
         await req.cast<List<int>>().pipe(sink);
         await sink.close();
@@ -87,6 +100,7 @@ class _Screen2State extends State<Screen2> {
         req.response..statusCode =200..close();
         if(mounted){
           recfiles.add(file.path);
+          print("Files recieved");
         }
         
       }
