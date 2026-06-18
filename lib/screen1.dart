@@ -1,7 +1,9 @@
 
 
+import 'dart:ffi';
 import 'dart:io';
 
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:nsd/nsd.dart';
@@ -21,6 +23,7 @@ class Screen1 extends StatefulWidget {
 }
 
 class _Screen1State extends State<Screen1> {
+  var currpg = 0;
   bool sending = false;
 String? name;
    List picked = [];
@@ -70,7 +73,7 @@ String? name;
     
     print(picked[0].name);
     print(picked[0].path);
-        print(picked[0].ext);
+        // print(picked[0].ext);
 
     
 
@@ -150,89 +153,152 @@ String? name;
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness==Brightness.dark;
-    PageController pc = PageController(viewportFraction: 0.77);
-    return Center(
-    child: Padding(padding: 
+    PageController pc = PageController(viewportFraction: 0.8);
+    return Padding(padding: 
     EdgeInsets.all(6),
     child: SizedBox(
-      height: MediaQuery.of(context).size.height*0.95,
-      width: MediaQuery.of(context).size.width*0.95,
-      child: picked.isEmpty?Center(
-        child: InkWell(
-  onTap: () => filepicker(),
-  child: ClipRRect(
-    borderRadius: BorderRadius.circular(15),
-    child: Stack(
-      // Centers children in the stack
-      children: [
-        // The image is the base layer
-        Image.asset(
-          'ass/gg.jpeg',
-          fit: BoxFit.cover,
-          height: MediaQuery.of(context).size.height*0.8,
-      width: MediaQuery.of(context).size.width*0.97,
-        ),
-        // The text is placed over the image
-        Positioned( left: 3,
-        top: 6,
-          child: const Text(
-            "Pick Files to get Started",
-            style: TextStyle(
-            
-              color: Colors.white, // Ensure high contrast with image
-              fontSize: 16,
-              fontWeight: FontWeight.w700
-              // Optional: add a semi-transparent background
-            ),
+      height: MediaQuery.of(context).size.height*0.99,
+       width: MediaQuery.of(context).size.width*0.95,
+      child: picked.isEmpty?
+      Column(
+        children: [
+          Flexible(
+            flex: 5,
+            child: InkWell(
+                  onTap: () => filepicker(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(13.0),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        ClipRRect(
+                        borderRadius: BorderRadius.circular(23),
+                        child: isDark? Image.asset(
+                          
+                           'ass/can2.png',
+                             fit: BoxFit.cover,
+                             alignment: Alignment.topRight
+                            
+                        ):Image.asset(
+                          
+                           'ass/can1.png',
+                             fit: BoxFit.cover,
+                             alignment: Alignment.topCenter
+                        
+                        )
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(13.0),
+                      child: Row(
+                        children: [
+                          Flexible(flex: 7,child: DefaultTextStyle(textAlign: TextAlign.start,
+                            style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.width>600&&MediaQuery.of(context).size.width<800?46:29,
+                              color: isDark?const Color.fromARGB(255, 251, 233, 216):Color(0xFF331B0D),fontFamily: 'opensauce'),
+                            child: AnimatedTextKit(
+                              
+                              isRepeatingAnimation: true,
+                              repeatForever: true,
+                          
+                              
+                              animatedTexts: [
+                          
+                              FadeAnimatedText(duration: Duration(milliseconds: 6000),fadeOutBegin: 0.8,fadeInEnd: 0.5,"Click here to start sharing files"),
+                               FadeAnimatedText(duration: Duration(milliseconds: 4500),fadeOutBegin: 0.4,fadeInEnd: 0.2,"All types of files are supported"),
+                                FadeAnimatedText(duration: Duration(milliseconds: 5000),fadeOutBegin: 0.8,fadeInEnd: 0.5,"Make sure that the devices are on same network")
+                            ]),
+                          )),
+                      Flexible(flex: 2,child: Container())
+                        ],
+                      ),
+                    )
+                      ],
+                    ),
+                  )
+                ),
           ),
-        ),
-      ],
-    ),
-  ),
-),
-      ):Padding(
+              // Spacer(flex: 1,),
+              SizedBox(height:50 ,),
+
+              Flexible(flex: 2,child: Text("Recivers  will appear here once u select files"))
+        ],
+      ):
+        Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           
           children: [
-            SizedBox(height: 23,),
-            Container(
-              constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.3, // Your max height limit
-          ),
-              
-          
-                
-                
-                child: PageView.builder(controller: pc,itemCount: picked.length,itemBuilder: (c,i)=>
-                
+            Expanded(
+              child: PageView.builder(onPageChanged: (value) => setState(() {
+                currpg = value;
+                print(currpg);
+              })
+              ,controller: pc,itemCount: picked.length,itemBuilder: (c,i)=>
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    child: ClipRRect(
-                      child: Stack(
-                        children: [
-                          // LottieBuilder.asset('ass/scan.json'),
-                          ClipRRect(borderRadius: BorderRadiusGeometry.circular(16),child: Image.file(File(picked[i].path,),fit: BoxFit.cover,height: double.infinity,width: double.infinity,)),
-                          Container(decoration: BoxDecoration(color: Colors.white),child: Text("${picked[i].name}", textAlign: TextAlign.center,))
-                        ],
+                  padding: const EdgeInsets.all(5.0),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      AnimatedScale(
+                        scale: currpg==i?0.9:0.85,
+                        duration: Duration(milliseconds: 1000),
+                        curve: Curves.bounceIn,
+                        child: ClipRRect(
+                        borderRadius: BorderRadius.circular(23),
+                        child: isDark? Image.asset(
+                          
+                           'ass/can2.png',
+                             fit: BoxFit.cover,
+                            //  alignment: Alignment.topRight
+                            
+                        ):Image.asset(
+                          
+                           'ass/can1.png',
+                             fit: BoxFit.cover,
+                            //  alignment: Alignment.topCenter
+                        
+                        )
+                                          ),
+                      ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: ListTile(
+                        title: Text("${picked[i].name}",style: TextStyle(fontWeight: FontWeight(700),fontSize: 26),maxLines: 2,overflow: TextOverflow.fade,),
+                        subtitle: Text("${(picked[i].size/1000000)} mb",maxLines: 1,overflow: TextOverflow.fade,),
                       ),
                     ),
                   )
+                    ],
+                  ),
                 )
                 
                 ),
-              
             ),
-             Divider(thickness: 3,),
-                      !recs.isEmpty?Expanded(child: ListView.builder(
-                        itemCount: recs.length,
-                        itemBuilder: (c,i)=>TextButton(
-                          child: Text("${recs[i].name}"),
-                          onPressed: ()=>send(recs[i]),
+             SizedBox(height: 10,),
+
+                      !recs.isEmpty?Expanded(
+                        child: GridView.builder(
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                          itemCount: recs.length,
+                          itemBuilder: (c,i)=>
+                          Container(
+                            constraints: BoxConstraints(
+                              maxHeight: 70,
+                              maxWidth: 50
+                            ),
+                            decoration: BoxDecoration(
+                              color:Colors.white ,
+                              borderRadius: BorderRadius.circular(19),
+                              boxShadow: [
+                                BoxShadow(offset: Offset(3, 1),color: const Color.fromARGB(40, 0, 0, 0),blurRadius: 30,spreadRadius: 8)
+                              ]
+                            ),
+                            child: InkWell(onTap: () => send(recs[i]),child: ListTile(leading: Icon(Icons.person_2),title: Text("${recs[i].name}"),))),
+                          
+                          
                         ),
-                        
-                      )):CircularProgressIndicator.adaptive()
+                      ):CircularProgressIndicator.adaptive()
                     ]
           
         ),
@@ -241,7 +307,6 @@ String? name;
              
             
     ),
-    ),
-  );
+    );
   }
 }

@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:glasswall/screen1.dart';
 import 'package:glasswall/screen2.dart';
+import 'package:glasswall/screen3.dart';
 import 'package:glasswall/setup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
@@ -62,7 +63,7 @@ class _s1State extends State<s1> {
   List<Widget> screens = [
     Screen1(),
     Screen2(),
-    Center(child: Text("Screen3"),),
+    Screen3(),
   ];
   Future <void> change() async{
     SharedPreferences pref =  await SharedPreferences.getInstance();
@@ -77,6 +78,9 @@ class _s1State extends State<s1> {
   Widget build(BuildContext context) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(onPressed:()=> scaff.currentState?.openDrawer(), icon: Icon(Icons.menu_rounded)),
+      ),
       key: scaff,
       drawer: Drawer(
        
@@ -97,13 +101,6 @@ class _s1State extends State<s1> {
       body: SafeArea(
         child: Padding(padding: EdgeInsets.all(18),child: Stack(
           children: [
-            Positioned(
-              top: 1,
-              left: 0,
-              child: IconButton(onPressed:()=> scaff.currentState?.openDrawer(), icon: Icon(Icons.auto_awesome_mosaic_outlined)))
-            ,
-            Positioned(top: 1,
-              left: 50,child: Text("GlassWall",style: TextStyle(fontWeight: FontWeight.w700,fontSize: 24),)),
 
             Positioned.fill(child: screens[curr]),
         

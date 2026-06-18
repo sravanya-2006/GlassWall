@@ -103,6 +103,12 @@ flutter:
           weight: 400
         - asset: fonts/gsansemib.ttf
           weight: 700
+    - family: opensauce
+      fonts:
+        - asset: fonts/OpenSauceOne-Regular.ttf
+        - asset: fonts/OpenSauceOne-SemiBold.ttf
+          weight: 400
+        
       
 
 flutter_launcher_icons:
