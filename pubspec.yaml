@@ -46,6 +46,7 @@ dependencies:
   http: ^1.6.0
   path_provider: ^2.1.6
   flutter_launcher_icons: ^0.14.4
+  dio: ^5.9.2
 
 
 dev_dependencies:

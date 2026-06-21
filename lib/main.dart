@@ -79,6 +79,7 @@ class _s1State extends State<s1> {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
+        title: Text("GlassWall"),
         leading: IconButton(onPressed:()=> scaff.currentState?.openDrawer(), icon: Icon(Icons.menu_rounded)),
       ),
       key: scaff,

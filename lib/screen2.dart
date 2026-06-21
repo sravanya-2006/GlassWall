@@ -41,8 +41,9 @@ class _Screen2State extends State<Screen2> {
     //  prefs.clear();
      name = prefs.getString("name");
      reg = await register(Service(
-      name: '$name',
+      name: '$name ',
       type: '_pandawannashare._tcp',
+      
       port: 6969,
     ));
     if(!mounted){

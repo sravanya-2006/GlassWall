@@ -34,8 +34,9 @@ String? name;
   var temp;
   @override
   void initState(){
+
     super.initState();
-   
+    print(Platform.operatingSystem);
     startdis();
     print("init state called for the share page");
   }
@@ -73,6 +74,7 @@ String? name;
     
     print(picked[0].name);
     print(picked[0].path);
+    print(Platform.operatingSystem);
         // print(picked[0].ext);
 
     
@@ -228,7 +230,8 @@ String? name;
         child: Column(
           
           children: [
-            Expanded(
+            Flexible(
+              flex: 4,
               child: PageView.builder(onPageChanged: (value) => setState(() {
                 currpg = value;
                 print(currpg);
@@ -240,9 +243,9 @@ String? name;
                     fit: StackFit.expand,
                     children: [
                       AnimatedScale(
-                        scale: currpg==i?0.9:0.85,
+                        scale: currpg==i?1:0.85,
                         duration: Duration(milliseconds: 1000),
-                        curve: Curves.bounceIn,
+                        curve: Curves.easeInOut,
                         child: ClipRRect(
                         borderRadius: BorderRadius.circular(23),
                         child: isDark? Image.asset(
@@ -275,9 +278,10 @@ String? name;
                 
                 ),
             ),
-             SizedBox(height: 10,),
+             Flexible(flex: 2,child: Spacer( )),
 
-                      !recs.isEmpty?Expanded(
+                      !recs.isEmpty?Flexible(
+                        flex: 3,
                         child: GridView.builder(
                           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
                           itemCount: recs.length,
@@ -298,7 +302,7 @@ String? name;
                           
                           
                         ),
-                      ):CircularProgressIndicator.adaptive()
+                      ):Flexible(flex: 3,child: CircularProgressIndicator.adaptive(semanticsLabel: "Waiting for receivers",))
                     ]
           
         ),
