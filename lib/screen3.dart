@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +14,8 @@ class Screen3 extends StatefulWidget {
 }
 
 class _Screen3State extends State<Screen3> {
+  FilePickerResult? fr;
+  String? resu;
   TextEditingController tcr = new TextEditingController();
   String? subbed;
   String? name;
@@ -28,7 +33,7 @@ class _Screen3State extends State<Screen3> {
 
   TextEditingController tc = new TextEditingController();
   var selected = 1;
-  Future<void> sub(String value) async {
+  Future<void> sub(String value, int val) async {
     var text = value;
     print(value);
     setState(() {
@@ -36,7 +41,7 @@ class _Screen3State extends State<Screen3> {
       tc.clear();
     });
     Dio()
-        .post("http://localhost:3000/mid", data: {'name': name, 'file': text})
+        .post("http://localhost:3000/mid", data: {'name': name, 'file': text, 'type':val.toString()})
         .then((res) => {
           print(res.data['code']),
 
@@ -50,7 +55,44 @@ class _Screen3State extends State<Screen3> {
     FilePickerResult? fr = await FilePicker.platform.pickFiles(
       allowMultiple: false,
     );
+    print(fr!.files.first.path);
+    String? path = fr!.files.first.path;
+    File fi = File(fr!.files.first.path!);
+    List<int> bytes = await fi.readAsBytes();
+    String encoded = base64Encode(bytes);
+    sub(encoded,1);
+
+
+
+
   }
+  Future<void> retrieve(String s) async {
+  var res = await Dio().get(
+    "http://localhost:3000/find/$s",
+  );
+
+  if (res.data['type'] == '0') {
+    setState(() {
+      resu = res.data['file'];
+    });
+  } else {
+    String encoded = res.data['file'];
+
+    List<int> bytes = base64Decode(encoded);
+
+    String? outputPath =
+        await FilePicker.platform.saveFile(
+      fileName: 'downloaded_file',
+    );
+
+    if (outputPath != null) {
+      await File(outputPath)
+          .writeAsBytes(bytes);
+
+      print("File saved to $outputPath");
+    }
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -82,17 +124,14 @@ class _Screen3State extends State<Screen3> {
                         borderRadius: BorderRadius.circular(23),
                       ),
                     ),
-                    onSubmitted: (value) => {sub(value)},
+                    onSubmitted: (value) => {sub(value,0)},
                   )
-                : selected==2? Flexible(
-                    flex: 3,
-                    child: InkWell(
-                      onTap: () => filep(),
-                      child: Container(
-                        child: Text("Pick files (one at a time)"),
-                      ),
-                    ),
-                  ):Container(
+                : selected==2? InkWell(
+                  onTap: () => filep(),
+                  child: Container(
+                    child: Text("Pick files (one at a time)"),
+                  ),
+                ):Container(
                     child: Column(
                       children: [
                         SizedBox(height: 10,),
@@ -102,13 +141,14 @@ class _Screen3State extends State<Screen3> {
                             borderRadius: BorderRadius.circular(8) 
                           )
                         ),
-                        onTap: () => retrieve,
-                        )
+                        onSubmitted: (val) => retrieve(val),
+                        ),
+                        Text("$resu")
                       ],
                     ),
                   ),
             subbed==null? ElevatedButton(
-              onPressed: () => sub(tc.text),
+              onPressed: () => sub(tc.text,0),
               child: Text("Submit"),
             ):InkWell(
               onTap: () => print("subbed is clicked ${subbed.toString()}"),
