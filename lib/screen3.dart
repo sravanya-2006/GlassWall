@@ -33,7 +33,7 @@ class _Screen3State extends State<Screen3> {
 
   TextEditingController tc = new TextEditingController();
   var selected = 1;
-  Future<void> sub(String value, int val) async {
+  Future<void> sub(String nam,String value, int val) async {
     var text = value;
     print(value);
     setState(() {
@@ -41,7 +41,7 @@ class _Screen3State extends State<Screen3> {
       tc.clear();
     });
     Dio()
-        .post("http://localhost:3000/mid", data: {'name': name, 'file': text, 'type':val.toString()})
+        .post("https://glassnode-ga1o.onrender.com/mid", data: {'name': nam, 'file': text, 'type':val.toString()})
         .then((res) => {
           print(res.data['code']),
 
@@ -57,10 +57,12 @@ class _Screen3State extends State<Screen3> {
     );
     print(fr!.files.first.path);
     String? path = fr!.files.first.path;
+    String? name = fr!.files.first.name;
+
     File fi = File(fr!.files.first.path!);
     List<int> bytes = await fi.readAsBytes();
     String encoded = base64Encode(bytes);
-    sub(encoded,1);
+    sub(name,encoded,1);
 
 
 
@@ -68,8 +70,9 @@ class _Screen3State extends State<Screen3> {
   }
   Future<void> retrieve(String s) async {
   var res = await Dio().get(
-    "http://localhost:3000/find/$s",
+    "https://glassnode-ga1o.onrender.com/find/$s",
   );
+
 
   if (res.data['type'] == '0') {
     setState(() {
@@ -82,7 +85,7 @@ class _Screen3State extends State<Screen3> {
 
     String? outputPath =
         await FilePicker.platform.saveFile(
-      fileName: 'downloaded_file',
+      fileName: res.data['name'],
     );
 
     if (outputPath != null) {
@@ -124,7 +127,7 @@ class _Screen3State extends State<Screen3> {
                         borderRadius: BorderRadius.circular(23),
                       ),
                     ),
-                    onSubmitted: (value) => {sub(value,0)},
+                    onSubmitted: (value) => {sub(name!,value,0)},
                   )
                 : selected==2? InkWell(
                   onTap: () => filep(),
@@ -148,7 +151,7 @@ class _Screen3State extends State<Screen3> {
                     ),
                   ),
             subbed==null? ElevatedButton(
-              onPressed: () => sub(tc.text,0),
+              onPressed: () => sub(name!,tc.text,0),
               child: Text("Submit"),
             ):InkWell(
               onTap: () => print("subbed is clicked ${subbed.toString()}"),
