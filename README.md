@@ -47,7 +47,7 @@ Unlike traditional cloud-based sharing solutions, GlassWall operates entirely wi
 # Prototype Showcase
 
 <p align="center">
-  <img src="prototype/Final.png" width="100%">
+  <img src="prototype/Finall.png" width="100%">
 </p>
 
 <p align="center">
