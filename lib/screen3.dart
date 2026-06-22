@@ -50,8 +50,8 @@ class _Screen3State extends State<Screen3> {
     });
     Dio()
         .post(
-          // "https://glassnode-ga1o.onrender.com/mid",
-          "https://glass-node-uezc-5hht5zsei-crazycat8686s-projects.vercel.app/mid",
+          "https://glassnode-ga1o.onrender.com/mid",
+          // "https://glass-node-uezc-5hht5zsei-crazycat8686s-projects.vercel.app/mid",
           data: {'name': nam, 'file': text, 'type': val.toString()},
         )
         .then(
@@ -93,7 +93,7 @@ class _Screen3State extends State<Screen3> {
     setState(() {
       loading = true;
     });
-    var res = await Dio().get("https://glass-node-uezc-5hht5zsei-crazycat8686s-projects.vercel.app/find/$s");
+    var res = await Dio().get("https://glassnode-ga1o.onrender.com/find/$s");
 
     if (res.data['type'] == '0') {
       setState(() {
