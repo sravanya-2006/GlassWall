@@ -14,6 +14,8 @@ class Screen3 extends StatefulWidget {
 }
 
 class _Screen3State extends State<Screen3> {
+  String? path;
+  bool? loading;
   FilePickerResult? fr;
   String? resu;
   TextEditingController tcr = new TextEditingController();
@@ -27,13 +29,18 @@ class _Screen3State extends State<Screen3> {
   Future<void> init() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     name = pref.getString('name');
+    path = pref.getString('chosen');
     setState(() {});
     print("hello $name");
   }
 
   TextEditingController tc = new TextEditingController();
   var selected = 1;
-  Future<void> sub(String nam,String value, int val) async {
+  Future<void> sub(String nam, String value, int val) async {
+    setState(() {
+      loading = true;
+    });
+    if (value == null) return;
     var text = value;
     print(value);
     setState(() {
@@ -41,14 +48,28 @@ class _Screen3State extends State<Screen3> {
       tc.clear();
     });
     Dio()
-        .post("https://glassnode-ga1o.onrender.com/mid", data: {'name': nam, 'file': text, 'type':val.toString()})
-        .then((res) => {
-          print(res.data['code']),
+        .post(
+          "https://glassnode-ga1o.onrender.com/mid",
+          data: {'name': nam, 'file': text, 'type': val.toString()},
+        )
+        .then(
+          (res) => {
+            print(res.data['code']),
 
-          setState(() {
-            subbed = res.data['code'];
-          })
-          });
+            setState(() {
+              subbed = res.data['code'];
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(" successfull!!!! ur code is \n  $subbed"),
+                ),
+              );
+            }),
+          },
+        );
+
+    setState(() {
+      loading = false;
+    });
   }
 
   Future<void> filep() async {
@@ -62,117 +83,174 @@ class _Screen3State extends State<Screen3> {
     File fi = File(fr!.files.first.path!);
     List<int> bytes = await fi.readAsBytes();
     String encoded = base64Encode(bytes);
-    sub(name,encoded,1);
-
-
-
-
+    sub(name, encoded, 1);
   }
+
   Future<void> retrieve(String s) async {
-  var res = await Dio().get(
-    "https://glassnode-ga1o.onrender.com/find/$s",
-  );
-
-
-  if (res.data['type'] == '0') {
+    ;
     setState(() {
-      resu = res.data['file'];
+      loading = true;
     });
-  } else {
-    String encoded = res.data['file'];
+    var res = await Dio().get("https://glassnode-ga1o.onrender.com/find/$s");
 
-    List<int> bytes = base64Decode(encoded);
+    if (res.data['type'] == '0') {
+      setState(() {
+        resu = res.data['file'];
+      });
+    } else {
+      String encoded = res.data['file'];
 
-    String? outputPath =
-        await FilePicker.platform.saveFile(
-      fileName: res.data['name'],
-    );
+      List<int> bytes = base64Decode(encoded);
 
-    if (outputPath != null) {
-      await File(outputPath)
-          .writeAsBytes(bytes);
+      if (Platform.isAndroid) {
+        String outputPath = "$path/${res.data['name']}";
+        await File(outputPath).writeAsBytes(bytes);
+      } else {
+        String? outputPath = await FilePicker.platform.saveFile(
+          fileName: res.data['name'],
+        );
 
-      print("File saved to $outputPath");
+        if (outputPath != null) {
+          await File(outputPath).writeAsBytes(bytes);
+        }
+      }
+      print("File saved ");
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("file saved")));
     }
+    setState(() {
+      loading = false;
+    });
   }
-}
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Center(
-        child: Column(
-          children: [
-            SegmentedButton(
-              segments: [
-                ButtonSegment(value: 1, label: Text("Text")),
-                ButtonSegment(value: 2, label: Text("File")),
-                ButtonSegment(value: 3, label: Text("Retrive")),
+      child: Column(
+        children: [
+          SegmentedButton(
+            segments: [
+              ButtonSegment(value: 1, label: Text("Text")),
+              ButtonSegment(value: 2, label: Text("File")),
+              ButtonSegment(value: 3, label: Text("Retrive")),
+            ],
+            selected: {selected},
+            onSelectionChanged: (p0) => {
+              setState(() {
+                selected = p0.first;
+                print(selected);
+                subbed = null;
+                resu = null;
+              }),
+            },
+          ),
+          SizedBox(height: 20),
 
-              ],
-              selected: {selected},
-              onSelectionChanged: (p0) => {
-                setState(() {
-                  selected = p0.first;
-                  print(selected);
-                }),
-              },
-            ),
-            SizedBox(height: 20),
-            selected == 1
-                ? TextField(
-                    controller: tc,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(23),
+          selected == 1
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    TextField(
+                      controller: tc,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(23),
+                        ),
+                      ),
+                      onSubmitted: (value) => {sub(name!, value, 0)},
+                    ),
+                    SizedBox(height: 10),
+                    subbed == null
+                        ? ElevatedButton(
+                            onPressed: () => sub(name!, tc.text, 0),
+                            child: Text("Submit"),
+                          )
+                        : InkWell(
+                            onTap: () =>
+                                print("subbed is clicked ${subbed.toString()}"),
+                            child: Container(
+                              child: Column(
+                                children: [
+                                  SizedBox(height: 5),
+                                  Text("Your retreival code is : "),
+                                  SizedBox(height: 3),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.deepOrangeAccent,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Text("${subbed.toString()}"),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                  ],
+                )
+              : selected == 2
+              ? Column(
+                  children: [
+                    InkWell(
+                      onTap: () => filep(),
+                      child: Container(
+                        child: Text("Pick files (one at a time)"),
                       ),
                     ),
-                    onSubmitted: (value) => {sub(name!,value,0)},
-                  )
-                : selected==2? InkWell(
-                  onTap: () => filep(),
-                  child: Container(
-                    child: Text("Pick files (one at a time)"),
-                  ),
-                ):Container(
-                    child: Column(
-                      children: [
-                        SizedBox(height: 10,),
-                        TextField(controller: tcr ,
+                    subbed == null
+                        ? SizedBox(height: 5)
+                        : InkWell(
+                            onTap: () =>
+                                print("subbed is clicked ${subbed.toString()}"),
+                            child: Container(
+                              child: Column(
+                                children: [
+                                  SizedBox(height: 5),
+                                  Text("Your retreival code is : "),
+                                  SizedBox(height: 3),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.deepOrangeAccent,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Text("${subbed.toString()}"),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                  ],
+                )
+              : Container(
+                  child: Column(
+                    children: [
+                      SizedBox(height: 10),
+                      TextField(
+                        controller: tcr,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8) 
-                          )
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
                         onSubmitted: (val) => retrieve(val),
-                        ),
-                        Text("$resu")
-                      ],
-                    ),
-                  ),
-            subbed==null? ElevatedButton(
-              onPressed: () => sub(name!,tc.text,0),
-              child: Text("Submit"),
-            ):InkWell(
-              onTap: () => print("subbed is clicked ${subbed.toString()}"),
-              child: Container(
-                child: Column(
-                  children: [
-                    SizedBox(height: 5,),
-                    Text("Your retreival code is : "),
-                    SizedBox(height: 3,),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.deepOrangeAccent,
-                        borderRadius: BorderRadius.circular(10)
                       ),
-                      child: Text("${subbed.toString()}")),
-                  ],
+                      // Text("$resu"),
+                      resu == null
+                          ? ElevatedButton(
+                              onPressed: () => {retrieve(tcr.text)},
+                              child: Text("Submit"),
+                            )
+                          : loading == false
+                          ? Text("$resu!")
+                          : CircularProgressIndicator(),
+
+                      path!=null?Text(
+                        "* Retrieved files will be saved at $path.....  \n It can be changed via menu",
+                      ):Text("pls set file locatiion from menu",style: TextStyle(color: Colors.red),),
+                    ],
+                  ),
                 ),
-              ),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }

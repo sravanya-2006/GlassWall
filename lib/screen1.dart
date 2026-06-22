@@ -154,6 +154,7 @@ String? name;
   
   @override
   Widget build(BuildContext context) {
+     var sw = MediaQuery.of(context).size.width;
     bool isDark = Theme.of(context).brightness==Brightness.dark;
     PageController pc = PageController(viewportFraction: 0.8);
     return Padding(padding: 
@@ -231,7 +232,7 @@ String? name;
           
           children: [
             Flexible(
-              flex: 4,
+              flex: 3,
               child: PageView.builder(onPageChanged: (value) => setState(() {
                 currpg = value;
                 print(currpg);
@@ -243,7 +244,7 @@ String? name;
                     fit: StackFit.expand,
                     children: [
                       AnimatedScale(
-                        scale: currpg==i?1:0.85,
+                        scale: currpg==i?1.01:0.95,
                         duration: Duration(milliseconds: 1000),
                         curve: Curves.easeInOut,
                         child: ClipRRect(
@@ -282,23 +283,30 @@ String? name;
 
                       !recs.isEmpty?Flexible(
                         flex: 3,
-                        child: GridView.builder(
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                        child: ListView.builder(
+                          // gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
                           itemCount: recs.length,
                           itemBuilder: (c,i)=>
                           Container(
-                            constraints: BoxConstraints(
-                              maxHeight: 70,
-                              maxWidth: 50
-                            ),
+                            
+                            width: sw*0.76,
                             decoration: BoxDecoration(
-                              color:Colors.white ,
-                              borderRadius: BorderRadius.circular(19),
-                              boxShadow: [
-                                BoxShadow(offset: Offset(3, 1),color: const Color.fromARGB(40, 0, 0, 0),blurRadius: 30,spreadRadius: 8)
-                              ]
-                            ),
-                            child: InkWell(onTap: () => send(recs[i]),child: ListTile(leading: Icon(Icons.person_2),title: Text("${recs[i].name}"),))),
+                              // color: Colors.amberAccent,
+                              color: isDark?const Color.fromARGB(148, 12, 15, 24):Colors.white,
+                                borderRadius: BorderRadius.circular(18),
+                                boxShadow: [
+                                  BoxShadow(offset: Offset(0, 1.7),blurRadius: 30,spreadRadius: 10,color: const Color.fromARGB(20, 3, 23, 48))
+                                ]
+
+                              ),
+                            child: InkWell(onTap: () => send(recs[i]),child: 
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(18)
+                              ),
+
+                              child: ListTile(leading: Icon(Icons.person_2),title: Text("${recs[i].name}"),))),
+                          ),
                           
                           
                         ),

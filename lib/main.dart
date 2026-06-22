@@ -7,7 +7,7 @@ import 'package:glasswall/screen2.dart';
 import 'package:glasswall/screen3.dart';
 import 'package:glasswall/setup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
+// import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 
 void main(){
   
@@ -105,45 +105,40 @@ class _s1State extends State<s1> {
 
             Positioned.fill(child: screens[curr]),
         
-            Positioned(left: 20,right: 20,bottom: 5,
+            Positioned(left: 70,right: 70,bottom: 5,
               child: Padding(
                 padding: const EdgeInsets.all(13.0),
-                child: LiquidGlassLayer(
-                  settings: LiquidGlassSettings(
-                    
-                    thickness: 10,
-                    blur: 20,
-                    lightIntensity: 1.5,
-                    
-                   saturation: 1.2,
-                    // glassColor: Color.fromARGB(118, 243, 238, 238)
+                child: Container(
+
+                  decoration: BoxDecoration(
+                    color: isDark?Color.fromARGB(255, 32, 32, 32):Colors.white,
+                    borderRadius: BorderRadius.circular(19),
+                    boxShadow: [
+                                  BoxShadow(offset: Offset(0, 1.7),blurRadius: 30,spreadRadius: 12,color:  !isDark? Color.fromARGB(20, 3, 23, 48):Colors.white12)
+                                ]
                   ),
-                  child: LiquidGlass(
-                    shape: LiquidRoundedSuperellipse(borderRadius: 50,side: BorderSide.none,),
-                    
-                    child: SizedBox(
-                      height: 60,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          IconButton(onPressed: ()=>{
-                            setState(() {
-                              curr =0;
-                            })
-                          }, icon: Icon(Icons.send_rounded,),),
-                          IconButton(onPressed: ()=>{
-                            setState(() {
-                              curr =1;
-                            })
-                          }, icon: Icon(Icons.receipt_rounded,)),
-                          IconButton(onPressed: ()=>{
-                            setState(() {
-                              curr =2;
-                            })
-                          }, icon: Icon(Icons.cloud_upload_outlined))
-                        ],
-                      ),
+                  child: SizedBox(
+                    height: 60,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        IconButton(onPressed: ()=>{
+                          setState(() {
+                            curr =0;
+                          })
+                        }, icon: Icon(Icons.send_rounded,),),
+                        IconButton(onPressed: ()=>{
+                          setState(() {
+                            curr =1;
+                          })
+                        }, icon: Icon(Icons.receipt_rounded,)),
+                        IconButton(onPressed: ()=>{
+                          setState(() {
+                            curr =2;
+                          })
+                        }, icon: Icon(Icons.cloud_upload_outlined))
+                      ],
                     ),
                   ),
                 ),
