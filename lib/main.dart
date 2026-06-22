@@ -115,7 +115,7 @@ class _s1State extends State<s1> {
                     color: isDark?Color.fromARGB(255, 32, 32, 32):Colors.white,
                     borderRadius: BorderRadius.circular(30),
                     boxShadow: [
-                                  BoxShadow(offset: Offset(0, 3),blurRadius: 30,spreadRadius: 6,color:  !isDark? Color.fromARGB(31, 2, 31, 111):const Color.fromARGB(31, 150, 26, 26)),
+                                  BoxShadow(offset: Offset(0, 4),blurRadius: 40,spreadRadius: 6,color:  isDark? Color.fromARGB(129, 63, 64, 50):const Color.fromARGB(31, 150, 26, 26)),
                                   
                                 ]
                   ),
