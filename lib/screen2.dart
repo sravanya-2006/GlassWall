@@ -28,6 +28,7 @@ class _Screen2State extends State<Screen2> {
 
   @override
   void initState() {
+    
     super.initState();
     ser();
     startreg();
@@ -35,6 +36,7 @@ class _Screen2State extends State<Screen2> {
   }
 
   Future<void> startreg()async{
+    
      print("assta lavista baby");
    
    try{
@@ -125,6 +127,7 @@ class _Screen2State extends State<Screen2> {
 
   @override
   Widget build(BuildContext context) {
+    print(MediaQuery.of(context).size.width);
       bool isd = Theme.of(context).brightness==Brightness.dark;
       var sw = MediaQuery.of(context).size.width;
     return senders.isEmpty
@@ -140,21 +143,23 @@ class _Screen2State extends State<Screen2> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     // crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text("Hello, ",style: TextStyle(fontSize: sw*0.03,),),
-                      ShaderMask(
-                        blendMode: BlendMode.srcIn,
-                        shaderCallback: (b)=> RadialGradient(colors: 
-                        isd?[Colors.blue,Color(0xFFF5F5DC)]:[ Color(0xFF00E5FF), Color(0xFF0052D4),
-                            Color(0xFF090A0F)],
-                        center: AlignmentGeometry.bottomRight,
-                        radius: 4
-                        ).createShader(b),
-                        
-                        child: Text("$name !",style: TextStyle(
-                          // fontWeight: FontWeight.w400,
-                          fontSize: sw*0.04,
-                          fontFamily: 'opensauce'
-                        ),))
+                      Flexible(child: Text("Hello, ",)),
+                      Flexible(
+                        child: ShaderMask(
+                          blendMode: BlendMode.srcIn,
+                          shaderCallback: (b)=> RadialGradient(colors: 
+                          isd?[Colors.blue,Color(0xFFF5F5DC)]:[ Color(0xFF00E5FF), Color(0xFF0052D4),
+                              Color(0xFF090A0F)],
+                          center: AlignmentGeometry.bottomRight,
+                          radius: 4
+                          ).createShader(b),
+                          
+                          child: Text("$name !",style: TextStyle(
+                            // fontWeight: FontWeight.w400,
+                            // fontSize: sw*0.04,
+                            fontFamily: 'opensauce'
+                          ),)),
+                      )
                     ],
                   ),
                 ),

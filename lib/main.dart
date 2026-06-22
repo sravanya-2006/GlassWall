@@ -76,6 +76,7 @@ class _s1State extends State<s1> {
   int curr = 0;
   @override
   Widget build(BuildContext context) {
+    var sw = MediaQuery.of(context).size.width;
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
@@ -105,16 +106,17 @@ class _s1State extends State<s1> {
 
             Positioned.fill(child: screens[curr]),
         
-            Positioned(left: 70,right: 70,bottom: 5,
+            Positioned(left: sw/15,right: sw/15,bottom: 5,
               child: Padding(
                 padding: const EdgeInsets.all(13.0),
                 child: Container(
 
                   decoration: BoxDecoration(
                     color: isDark?Color.fromARGB(255, 32, 32, 32):Colors.white,
-                    borderRadius: BorderRadius.circular(19),
+                    borderRadius: BorderRadius.circular(30),
                     boxShadow: [
-                                  BoxShadow(offset: Offset(0, 1.7),blurRadius: 30,spreadRadius: 12,color:  !isDark? Color.fromARGB(20, 3, 23, 48):Colors.white12)
+                                  BoxShadow(offset: Offset(0, 3),blurRadius: 30,spreadRadius: 6,color:  !isDark? Color.fromARGB(31, 2, 31, 111):const Color.fromARGB(31, 150, 26, 26)),
+                                  
                                 ]
                   ),
                   child: SizedBox(

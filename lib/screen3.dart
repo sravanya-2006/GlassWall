@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Screen3 extends StatefulWidget {
@@ -49,7 +50,8 @@ class _Screen3State extends State<Screen3> {
     });
     Dio()
         .post(
-          "https://glassnode-ga1o.onrender.com/mid",
+          // "https://glassnode-ga1o.onrender.com/mid",
+          "https://glass-node-uezc-5hht5zsei-crazycat8686s-projects.vercel.app/mid",
           data: {'name': nam, 'file': text, 'type': val.toString()},
         )
         .then(
@@ -91,7 +93,7 @@ class _Screen3State extends State<Screen3> {
     setState(() {
       loading = true;
     });
-    var res = await Dio().get("https://glassnode-ga1o.onrender.com/find/$s");
+    var res = await Dio().get("https://glass-node-uezc-5hht5zsei-crazycat8686s-projects.vercel.app/find/$s");
 
     if (res.data['type'] == '0') {
       setState(() {
@@ -168,22 +170,26 @@ class _Screen3State extends State<Screen3> {
                           )
                         : InkWell(
                             onTap: () =>
-                                print("subbed is clicked ${subbed.toString()}"),
-                            child: Container(
-                              child: Column(
-                                children: [
-                                  SizedBox(height: 5),
-                                  Text("Your retreival code is : "),
-                                  SizedBox(height: 3),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.deepOrangeAccent,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
+                               {
+                            Clipboard.setData(ClipboardData(text: subbed.toString())),ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("$subbed is copied to ur clipboard")))
+                          },
+                            child: Column(
+                              children: [
+                                SizedBox(height: 5),
+                                Text("Your retreival code is : "),
+                                SizedBox(height: 3),
+                                Container(
+                                  
+                                  decoration: BoxDecoration(
+                                    color: Colors.deepOrangeAccent,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
                                     child: Text("${subbed.toString()}"),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                   ],
@@ -200,23 +206,25 @@ class _Screen3State extends State<Screen3> {
                     subbed == null
                         ? SizedBox(height: 5)
                         : InkWell(
-                            onTap: () =>
-                                print("subbed is clicked ${subbed.toString()}"),
-                            child: Container(
-                              child: Column(
-                                children: [
-                                  SizedBox(height: 5),
-                                  Text("Your retreival code is : "),
-                                  SizedBox(height: 3),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.deepOrangeAccent,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Text("${subbed.toString()}"),
+                            onTap: () => {
+                            Clipboard.setData(ClipboardData(text: subbed.toString())),ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("$subbed is copied to ur clipboard")))
+                          },
+                            child: Column(
+                              children: [
+                                SizedBox(height: 5),
+                                Text("Your retreival code is : "),
+                                SizedBox(height: 3),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.deepOrangeAccent,
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                ],
-                              ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text("${subbed}"),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                   ],
@@ -235,14 +243,28 @@ class _Screen3State extends State<Screen3> {
                         onSubmitted: (val) => retrieve(val),
                       ),
                       // Text("$resu"),
+                      SizedBox(height: 20),
                       resu == null
                           ? ElevatedButton(
                               onPressed: () => {retrieve(tcr.text)},
                               child: Text("Submit"),
                             )
                           : loading == false
-                          ? Text("$resu!")
+                          ? InkWell(onTap: () => {
+                            Clipboard.setData(ClipboardData(text: resu!)),ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("$resu is copied to ur clipboard")))
+                          } ,child: Container(
+
+
+                            decoration: BoxDecoration(
+                              color: Colors.deepOrange,
+                              borderRadius: BorderRadius.circular(13)
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text("$resu!"),
+                            )))
                           : CircularProgressIndicator(),
+                          SizedBox(height: 10),
 
                       path!=null?Text(
                         "* Retrieved files will be saved at $path.....  \n It can be changed via menu",
