@@ -163,12 +163,12 @@ class _Screen3State extends State<Screen3> {
                       onSubmitted: (value) => {sub(name!, value, 0)},
                     ),
                     SizedBox(height: 10),
-                    subbed == null
+                    subbed == null&&loading==false
                         ? ElevatedButton(
                             onPressed: () => sub(name!, tc.text, 0),
                             child: Text("Submit"),
                           )
-                        : InkWell(
+                        :loading==true?CircularProgressIndicator(): InkWell(
                             onTap: () =>
                                {
                             Clipboard.setData(ClipboardData(text: subbed.toString())),ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("$subbed is copied to ur clipboard")))
